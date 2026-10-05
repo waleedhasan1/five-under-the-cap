@@ -1,0 +1,50 @@
+# All seasons, thresholds, budgets and paths live here (PROJECT_PLAN.md section 10).
+
+paths:
+  raw_dir: data/raw
+  salary_dir: data/raw/salaries
+  warehouse: data/warehouse.duckdb
+  app_data: app_data
+  reports: reports
+  player_id_overrides: config/player_id_overrides.csv
+
+seasons:
+  # Five most recent completed regular seasons; the last one is the test season.
+  train: ["2021-22", "2022-23", "2023-24", "2024-25"]
+  test: "2025-26"
+  # Season whose salaries the game uses.
+  salary_season: "2026-27"
+  season_type: "Regular Season"
+
+ingest:
+  sleep_seconds: 1.0
+  max_retries: 4
+  backoff_factor: 2.0
+  timeout_seconds: 60
+  # Row-count sanity checks applied to every season pulled.
+  min_players_per_season: 400
+  min_teams_per_season: 30
+  min_lineups_per_team: 1
+
+thresholds:
+  archetype_min_minutes: 500
+  game_pool_min_minutes: 500
+  test_min_possessions: 100
+  max_unmatched_share: 0.02
+
+random_seed: 20261005
+
+# Filled at milestone 6 from the salary data (PROJECT_PLAN.md section 8, "Budgets").
+budgets:
+  easy: null
+  standard: null
+  hard: null
+
+# Must be looked up from an official source with the date; never from memory.
+salary_cap:
+  amount: null
+  source: null
+  retrieved: null
+
+# Synergy play types pulled when the endpoint cooperates (optional features).
+play_types: [Isolation, Transition, PRBallHandler, PRRollman, Postup, Spotup, Handoff, Cut, OffScreen, OffRebound, Misc]

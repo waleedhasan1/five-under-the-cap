@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Data: raw API cache and the warehouse are rebuilt by `make data`
+data/raw/*
+!data/raw/salaries/
+data/raw/salaries/*
+!data/raw/salaries/.gitkeep
+data/*.duckdb
+data/*.duckdb.wal
