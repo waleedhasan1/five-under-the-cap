@@ -9,7 +9,7 @@ net rating better than summing individual player ratings?
 | Milestone | State |
 |---|---|
 | 1. Scaffold | done |
-| 2. Ingestion | code written; needs a run from a network that can reach stats.nba.com |
+| 2. Ingestion | done for NBA stats (5 seasons cached, staging built); salary CSV still needed |
 | 3–8 | not started |
 
 ## Results
