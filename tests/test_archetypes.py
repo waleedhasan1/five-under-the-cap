@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 from fivecap.archetypes import ArchetypeModel, fill_values_from, fit_gmm, prepare_features
@@ -33,7 +34,9 @@ def test_memberships_are_probability_vectors() -> None:
     fills = fill_values_from(df, FEATURES)
     scaler = StandardScaler().fit(prepare_features(df, FEATURES, fills))
     cfg = {"n_init": 1, "reg_covar": 1e-3}
-    gmm = fit_gmm(scaler.transform(prepare_features(df, FEATURES, fills)), 3, "diag", 0, cfg)
-    m = ArchetypeModel(FEATURES, fills, scaler, gmm).memberships(df)
+    pca = PCA(n_components=2).fit(scaler.transform(prepare_features(df, FEATURES, fills)))
+    x = pca.transform(scaler.transform(prepare_features(df, FEATURES, fills)))
+    gmm = fit_gmm(x, 3, "diag", 0, cfg)
+    m = ArchetypeModel(FEATURES, fills, scaler, pca, gmm).memberships(df)
     assert m.shape == (60, 3)
     np.testing.assert_allclose(m.sum(axis=1), 1.0)

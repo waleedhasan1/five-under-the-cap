@@ -1,4 +1,4 @@
-"""Player archetypes from a Gaussian mixture over player-season style features.
+"""Player archetypes from a Gaussian mixture over PCA-reduced player-season style features.
 
 PROJECT_PLAN.md 7.1. The mixture is fit on training-season player-seasons with at least
 ``archetype_min_minutes`` minutes; soft memberships are then computed for every
@@ -19,6 +19,7 @@ import joblib
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+from sklearn.decomposition import PCA
 from sklearn.metrics import adjusted_rand_score
 from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
@@ -30,17 +31,18 @@ log = logging.getLogger("fivecap.archetypes")
 
 @dataclass
 class ArchetypeModel:
-    """A fitted scaler + mixture and the feature columns it expects."""
+    """A fitted scaler, PCA projection and mixture, plus the feature columns it expects."""
 
     features: list[str]
     fill_values: dict[str, float]
     scaler: StandardScaler
+    pca: PCA
     gmm: GaussianMixture
 
     def memberships(self, df: pd.DataFrame) -> np.ndarray:
         """Soft membership matrix (rows sum to 1) for player-seasons in ``df``."""
         x = prepare_features(df, self.features, self.fill_values)
-        return self.gmm.predict_proba(self.scaler.transform(x))
+        return self.gmm.predict_proba(self.pca.transform(self.scaler.transform(x)))
 
 
 def prepare_features(
@@ -189,7 +191,15 @@ def main() -> int:
         log.info("fit sample: %d player-seasons; %d without any play-type rows", len(train), no_pt)
 
         scaler = StandardScaler().fit(prepare_features(train, features, fills))
-        x = scaler.transform(prepare_features(train, features, fills))
+        x_std = scaler.transform(prepare_features(train, features, fills))
+        # Keep the fewest components that explain the configured share of variance.
+        pca = PCA(n_components=cfg["pca_variance"], svd_solver="full").fit(x_std)
+        x = pca.transform(x_std)
+        log.info(
+            "PCA: %d components explain %.1f%% of variance",
+            pca.n_components_,
+            100 * pca.explained_variance_ratio_.sum(),
+        )
 
         bic = bic_grid(x, cfg, seed)
         best = bic.sort_values("bic").iloc[0]
@@ -204,9 +214,9 @@ def main() -> int:
             best_k["best_k"].value_counts().to_dict(),
         )
 
-        model = ArchetypeModel(features, fills, scaler, fit_gmm(x, k, cov, seed, cfg))
+        model = ArchetypeModel(features, fills, scaler, pca, fit_gmm(x, k, cov, seed, cfg))
         m_train = model.memberships(train)
-        summary, top = describe(train, m_train, features, x)
+        summary, top = describe(train, m_train, features, x_std)
 
         m_all = model.memberships(all_ps)
         out = all_ps[["season", "player_id", "player_name", "minutes"]].copy()
@@ -233,6 +243,8 @@ def main() -> int:
         "training_seasons": s["seasons"]["train"],
         "n_player_seasons": len(train),
         "features": features,
+        "pca_components": int(pca.n_components_),
+        "pca_explained_variance": float(pca.explained_variance_ratio_.sum()),
         "k": k,
         "covariance_type": cov,
         "bic": float(best["bic"]),

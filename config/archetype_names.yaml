@@ -1,9 +1,11 @@
-# DRAFT names for the k=5 mixture fit on 2021-22..2024-25 (reports/archetype_summary.csv).
+# DRAFT names for the k=6 mixture (PCA, 7 components) fit on 2021-22..2024-25
+# (reports/archetype_summary.csv, reports/archetype_top_members.csv).
 # Index = mixture component. Drafted from centroids and top members; NEEDS OWNER REVIEW.
 status: draft
 names:
-  0: Primary shot creator        # high usage, isolation, low assisted share
-  1: Rim-running big             # rim shots, cuts, putbacks, offensive rebounds
-  2: Frontcourt hub              # post-ups, defensive rebounds, size, blocks
-  3: Spot-up wing                # corner threes, assisted makes, spot-ups
-  4: Ball-handling guard         # pick-and-roll handler, smaller frame
+  0: Movement shooter            # off-screen, handoffs, corner threes
+  1: Post hub big                # post-ups, size, defensive rebounds, high usage
+  2: Pass-first guard            # smaller frame, low roll-man share
+  3: Self-creating scorer        # isolation, pick-and-roll handler, low assisted share
+  4: Low-usage defensive forward # low usage, few on-ball actions
+  5: Rim-running big             # rim shots, offensive rebounds, putbacks

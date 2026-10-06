@@ -32,16 +32,17 @@
     "pt_spotup",
     "pt_transition"
   ],
-  "k": 5,
+  "pca_components": 7,
+  "pca_explained_variance": 0.8098870040837083,
+  "k": 6,
   "covariance_type": "full",
-  "bic": 54665.29779356768,
-  "stability_ari_mean": 0.5552239776193173,
-  "stability_ari_min": 0.48404249083131035,
+  "bic": 31590.929887613867,
+  "stability_ari_mean": 0.8281983773106895,
+  "stability_ari_min": 0.4728031096044073,
   "bic_best_k_by_seed": {
-    "5": 9,
-    "6": 1
+    "6": 10
   },
   "seed": 20261005,
-  "config_hash": "15de53fc2fc6",
+  "config_hash": "40fe0db7865a",
   "date": "2026-10-05"
 }
