@@ -5,7 +5,17 @@ from __future__ import annotations
 import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
-from common import DIVERGING, OVER, approx_note, data, money, money_md, signed
+from common import (
+    DIVERGING,
+    HEADSHOT_COL,
+    OVER,
+    approx_note,
+    data,
+    headshot,
+    money,
+    money_md,
+    signed,
+)
 from theme import XP_BLUE, section, style_fig, window
 
 from fivecap.game import pair_grid
@@ -55,6 +65,11 @@ picked: list[int] = st.multiselect(
     key=f"pick_{key}",
     placeholder="Start typing a name…",
 )
+if picked:
+    for col, i in zip(st.columns(5)[: len(picked)], picked, strict=True):
+        r = players.loc[i]
+        col.image(headshot(r.player_id), width="stretch")
+        col.caption(f"**{r.player_name}** · {money_md(r.salary)}")
 payroll = float(players.loc[picked, "salary"].sum()) if picked else 0.0
 over = payroll > budget
 
@@ -168,8 +183,11 @@ with gc1:
 with gc2:
     st.markdown("**Your five**")
     st.dataframe(
-        players.loc[picked, ["player_name", "top_archetype", "salary", "effect"]].rename(
+        players.loc[picked, ["player_id", "player_name", "top_archetype", "salary", "effect"]]
+        .assign(player_id=lambda x: x["player_id"].map(headshot))
+        .rename(
             columns={
+                "player_id": " ",
                 "player_name": "Player",
                 "top_archetype": "Archetype",
                 "salary": "Salary",
@@ -179,6 +197,7 @@ with gc2:
         hide_index=True,
         use_container_width=True,
         column_config={
+            " ": HEADSHOT_COL,
             "Salary": st.column_config.NumberColumn(format="$%,.0f"),
             "Talent": st.column_config.NumberColumn(format="%+.2f"),
         },

@@ -18,6 +18,14 @@ def data() -> AppData:
     return load()
 
 
+def headshot(player_id: int) -> str:
+    """NBA CDN headshot URL (the CDN serves a silhouette for unknown ids)."""
+    return f"https://cdn.nba.com/headshots/nba/latest/260x190/{int(player_id)}.png"
+
+
+HEADSHOT_COL = st.column_config.ImageColumn("", width="small")
+
+
 def money(x: float) -> str:
     """$12.3M style."""
     return f"${x / 1e6:,.1f}M"

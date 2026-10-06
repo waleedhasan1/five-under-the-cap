@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import plotly.graph_objects as go
 import streamlit as st
-from common import DIVERGING, approx_note, data, money_md
+from common import DIVERGING, HEADSHOT_COL, approx_note, data, headshot, money_md
 from theme import style_fig, window
 
 st.set_page_config(
@@ -33,8 +33,10 @@ if choice:
     p = p[p["top_archetype"].isin(choice)]
 
 p["Archetype mix"] = p[arch].to_numpy().tolist()
+p["headshot"] = p["player_id"].map(headshot)
 table = p[
     [
+        "headshot",
         "player_name",
         "contract_team",
         "top_archetype",
@@ -47,6 +49,7 @@ table = p[
     ]
 ].rename(
     columns={
+        "headshot": " ",
         "player_name": "Player",
         "contract_team": "Team",
         "top_archetype": "Top archetype",
@@ -63,6 +66,7 @@ st.dataframe(
     use_container_width=True,
     height=420,
     column_config={
+        " ": HEADSHOT_COL,
         "Archetype mix": st.column_config.BarChartColumn(
             help="Membership in each archetype, in order: "
             + ", ".join(d.archetype_name(a) for a in arch),
