@@ -11,8 +11,8 @@ net rating better than summing individual player ratings?
 | 1. Scaffold | done |
 | 2. Ingestion | done for NBA stats (5 seasons cached, staging built); salaries loaded (2026-27, retrieved 2026-10-05) |
 | 3. Warehouse | done: marts built by SQL, data tests pass |
-| 4. Archetypes | done (PCA + mixture, k=6); draft names awaiting owner review |
-| 5. Lineup models + validation | run; awaiting owner review of the result |
+| 4. Archetypes | done (PCA + mixture, k=6); names approved |
+| 5. Lineup models + validation | done; result reported below |
 | 6–8 | not started |
 
 ## Results

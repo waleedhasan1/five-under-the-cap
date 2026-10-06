@@ -62,8 +62,8 @@ time split: train on 2021-22 to 2024-25, test on 2025-26.
 - First attempt without PCA was rejected: BIC picked the edge of the search range and
   seeds disagreed (ARI about 0.49). Adding PCA fixed both. This is a good interview story
   about diagnosing an unstable model instead of tuning until it looked good.
-- Draft archetype names (pending owner review): movement shooter, post hub big,
-  pass-first guard, self-creating scorer, low-usage defensive forward, rim-running big.
+- Archetype names: 3-and-D, post-up big, pass-first guard, self-creator,
+  low-usage defensive forward, rim-running big.
 
 **Engineering**
 - Python 3.11, uv, DuckDB, pandas, scikit-learn, Plotly, Streamlit (planned UI).
