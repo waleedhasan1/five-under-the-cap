@@ -2,9 +2,17 @@
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import streamlit as st
 
-from fivecap.appdata import AppData, load
+# Hosts that install only the dependencies (not the project itself) can still import fivecap.
+_SRC = Path(__file__).resolve().parents[1] / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from fivecap.appdata import AppData, load  # noqa: E402
 
 # Diverging pair validated for colour-vision deficiency (red = hurts, blue = helps).
 NEG, MID, POS = "#e34948", "#f0efec", "#2a78d6"
