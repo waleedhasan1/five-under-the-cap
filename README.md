@@ -4,7 +4,8 @@
 role-pairing interaction terms to a lineup model predict next-season lineup
 net rating better than summing individual player ratings?
 
-**Status:** work in progress. See [`project_plan.md`](project_plan.md) for the full plan.
+**Status:** v1 complete. Code: <https://github.com/waleedhasan1/five-under-the-cap>.
+See [`project_plan.md`](project_plan.md) for the full plan.
 
 | Milestone | State |
 |---|---|
@@ -15,7 +16,7 @@ net rating better than summing individual player ratings?
 | 5. Lineup models + validation | done; result reported below |
 | 6. Valuation + optimizer | done |
 | 7. App | done: game, player explorer, methods page; runs locally from app_data/ |
-| 8. Ship | not started (deployment) |
+| 8. Ship | repo public; fresh-clone run verified; Streamlit Community Cloud config in place (see "Deploy") |
 
 ## Results
 
@@ -50,6 +51,17 @@ make lint      # ruff + mypy
 make data      # pull NBA stats into data/raw/ (cached) and build staging tables
 make app       # run the Streamlit app
 ```
+
+The app reads only the committed `app_data/` files (1.7 MB), so `make install && make app` on a
+fresh clone runs it without the raw data or the warehouse. Rebuilding `app_data/` from scratch
+needs `make data features models app-data` and the salary file below.
+
+### Deploy
+
+Hosted on Streamlit Community Cloud from this repo: entrypoint `app/Home.py`, Python 3.11
+(`.python-version`), dependencies from `uv.lock`, theme from `.streamlit/config.toml`.
+No secrets are needed. `app/common.py` puts `src/` on the import path, so the app also runs
+when a host installs only the dependencies.
 
 ### Salaries
 

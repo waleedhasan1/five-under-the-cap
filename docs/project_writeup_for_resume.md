@@ -1,7 +1,9 @@
 # Project write-up for the resume writer
 
-*Status as of 2026-10-06. Milestones 1–7 of 8 are complete: the analysis is finished and the
-web app (front end) is built, tested and runs locally. Only milestone 8, public deployment, remains.*
+*Status as of 2026-10-06. All 8 milestones are built. The code is public at
+<https://github.com/waleedhasan1/five-under-the-cap>, and the app was verified to run from a fresh
+clone. The live app link will be added here once the owner finishes the one-click Streamlit
+Community Cloud deploy.*
 
 ## Instructions for the resume writer
 
@@ -9,10 +11,16 @@ web app (front end) is built, tested and runs locally. Only milestone 8, public 
 - **The main result is a null result, and the owner has approved this framing:** "Measured
   carefully, fit terms did not beat summed talent out of sample." Never turn it into a claim
   that fit was found to matter, or that the model is accurate. The selling point is the rigor.
-- Do not invent metrics, users or accuracy figures. The app is **built and working locally but
-  not yet deployed**: do not give it a public URL or say people use it until the owner adds a link.
+- Do not invent metrics, users or accuracy figures. The **code repository is public** and may be
+  linked: <https://github.com/waleedhasan1/five-under-the-cap>. Give a live app URL only once one
+  is listed under "Links" below, and never say people use the app.
 - Target role: Basketball Data Scientist (Utah Jazz). Readers are professional basketball
   analysts who value statistical honesty over impressive-sounding claims.
+
+## Links
+
+- Code: <https://github.com/waleedhasan1/five-under-the-cap>
+- Live app: *not yet listed (owner to add after deploying)*
 
 ## One-line summary
 
@@ -72,6 +80,10 @@ time split: train on 2021-22 to 2024-25, test on 2025-26.
   run on hand-built fixture tables, a brute-force check of the optimizer, a test that the app's
   prediction matches the model's, and smoke tests of every app page); GitHub Actions CI config;
   Makefile targets for each stage (`make data / features / models / app-data / app`).
+- Deployment-ready (milestone 8): public GitHub repo; a fresh clone with only the locked
+  dependencies installed renders all three app pages without errors; configured for Streamlit
+  Community Cloud (Python 3.11, `uv.lock`, no secrets). The app ships only 1.7 MB of precomputed
+  data, so it runs without the raw data or the warehouse.
 - All seasons, thresholds and seeds in one config file; model metadata records the config hash.
 
 **Lineup models and validation (milestone 5)**
@@ -126,7 +138,10 @@ time split: train on 2021-22 to 2024-25, test on 2025-26.
 
 ## Not done yet (do not present as done)
 
-- Milestone 8: deploy the app to Streamlit Community Cloud and verify a fresh-clone rebuild.
+- The live app link: the Streamlit Community Cloud deploy is the owner's step (it needs their
+  account). Until a link appears under "Links", describe the app as built, not hosted.
+- Not verified: a full rebuild of the raw data from a fresh clone (it re-downloads five seasons
+  from NBA.com and needs a manually saved salary page). The fresh-clone check covered the app.
 - Follow-up: fix the selection bias in the lineup test set (documented limitation).
 
 ## Suggested bullets
@@ -146,7 +161,7 @@ time split: train on 2021-22 to 2024-25, test on 2025-26.
   bias in the evaluation set, documenting it rather than tuning on the test season.
 - Built an interactive Streamlit web app on top of the model: a salary-cap lineup game with
   live predictions and uncertainty ranges, a player value explorer, and a methods page;
-  predictions run in about 5 ms from precomputed data.
+  predictions run in about 5 ms from precomputed data. Code public on GitHub.
 - Solved a budget-constrained lineup optimization (quadratic knapsack) with OR-Tools CP-SAT,
   excluding lineup types outside the training data to avoid exploiting model extrapolation.
 - Designed Plotly visualizations for analysts and fans: a colorblind-safe pairwise fit heatmap,
