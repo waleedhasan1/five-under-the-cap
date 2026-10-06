@@ -9,7 +9,7 @@ net rating better than summing individual player ratings?
 | Milestone | State |
 |---|---|
 | 1. Scaffold | done |
-| 2. Ingestion | done for NBA stats (5 seasons cached, staging built); salary CSV still needed |
+| 2. Ingestion | done for NBA stats (5 seasons cached, staging built); salaries loaded (2026-27, retrieved 2026-10-05) |
 | 3–8 | not started |
 
 ## Results
@@ -28,10 +28,20 @@ make data      # pull NBA stats into data/raw/ (cached) and build staging tables
 make app       # run the Streamlit app
 ```
 
-### Data you provide by hand
+### Salaries
 
-Salaries come from the Basketball Reference contracts table. Export it to CSV
-and place it in `data/raw/salaries/` (the file is gitignored).
+Salaries come from the Basketball Reference contracts table
+(<https://www.basketball-reference.com/contracts/players.html>). Either export it
+with "Share & Export → Get table as CSV", or save the page once as
+`data/raw/salaries/contracts_players_<date>.html` and convert it:
+
+```bash
+uv run python -c "from pathlib import Path; from fivecap.ingest.salaries import html_to_csv; \
+  print(html_to_csv(Path('data/raw/salaries/contracts_players_<date>.html')))"
+```
+
+Then run `make data`. Fetch the page once only; Sports Reference blocks clients
+that send more than 20 requests a minute. Both files are gitignored.
 
 ## Limitations
 
