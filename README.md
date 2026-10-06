@@ -10,7 +10,8 @@ net rating better than summing individual player ratings?
 |---|---|
 | 1. Scaffold | done |
 | 2. Ingestion | done for NBA stats (5 seasons cached, staging built); salaries loaded (2026-27, retrieved 2026-10-05) |
-| 3–8 | not started |
+| 3. Warehouse | done: marts built by SQL, data tests pass |
+| 4–8 | not started |
 
 ## Results
 
@@ -45,5 +46,10 @@ that send more than 20 requests a minute. Both files are gitignored.
 
 ## Limitations
 
-To be written with the results. Known up front: no opponent adjustment in v1
+To be written with the results. Known up front:
+
+- Mid-range shots are one zone (no short/long split) because the zone endpoint does not separate them.
+- Salaries are a single snapshot of the Basketball Reference contracts table; players missing from it
+  (for example, unsigned at that date) are not in the game pool.
+- no opponent adjustment in v1
 (lineup aggregates average over whoever the lineup faced).

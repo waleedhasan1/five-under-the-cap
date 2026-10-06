@@ -5,6 +5,7 @@ install:
 
 data:
 	uv run python -m fivecap.ingest
+	uv run python -m fivecap.warehouse
 
 features:
 	@echo "Milestone 3/4: not implemented yet" && exit 1

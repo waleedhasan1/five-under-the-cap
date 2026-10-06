@@ -64,6 +64,11 @@ def pulls(play_types: list[str]) -> list[Pull]:
             {"measure_type_detailed_defense": "Advanced", "per_mode_detailed": "Totals"},
         ),
         Pull(
+            "player_scoring",
+            "LeagueDashPlayerStats",
+            {"measure_type_detailed_defense": "Scoring", "per_mode_detailed": "Totals"},
+        ),
+        Pull(
             "player_shot_zones",
             "LeagueDashPlayerShotLocations",
             {"distance_range": "By Zone", "per_mode_detailed": "Totals"},
