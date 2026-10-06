@@ -11,7 +11,7 @@ features:
 	uv run python -m fivecap.archetypes
 
 models:
-	@echo "Milestone 5: not implemented yet" && exit 1
+	uv run python -m fivecap.evaluate
 
 app-data:
 	@echo "Milestone 6: not implemented yet" && exit 1

@@ -66,3 +66,16 @@ archetypes:
   n_init: 5
   reg_covar: 1.0e-3
   stability_seeds: 10
+
+lineup_model:
+  # Tuned by time-blocked CV inside the training seasons only: each validation season is
+  # predicted from the seasons before it, exactly as the test season is.
+  cv_validation_seasons: ["2023-24", "2024-25"]
+  recency_decay_grid: [0.5, 0.75, 1.0]   # sample weight multiplier per season of age
+  alpha_player_grid: [1, 3, 10, 30, 100, 300, 1000]
+  alpha_fit_grid: [1, 10, 100, 1000, 10000]
+  # Unseen players get the mean effect of training players in this low-possession quantile.
+  unseen_player_quantile: 0.25
+  interval: 0.8
+  bootstrap_fit_reps: 200
+  bootstrap_test_reps: 2000
