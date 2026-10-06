@@ -1,6 +1,7 @@
 # Project write-up for the resume writer
 
-*Status as of 2026-10-06. Milestones 1–5 of 8 are complete. Update this file as milestones land.*
+*Status as of 2026-10-06. Milestones 1–7 of 8 are complete: the analysis is finished and the
+web app (front end) is built, tested and runs locally. Only milestone 8, public deployment, remains.*
 
 ## Instructions for the resume writer
 
@@ -8,8 +9,8 @@
 - **The main result is a null result, and the owner has approved this framing:** "Measured
   carefully, fit terms did not beat summed talent out of sample." Never turn it into a claim
   that fit was found to matter, or that the model is accurate. The selling point is the rigor.
-- Do not invent metrics, users, accuracy figures or deployment status. The app is not built or
-  deployed yet.
+- Do not invent metrics, users or accuracy figures. The app is **built and working locally but
+  not yet deployed**: do not give it a public URL or say people use it until the owner adds a link.
 - Target role: Basketball Data Scientist (Utah Jazz). Readers are professional basketball
   analysts who value statistical honesty over impressive-sounding claims.
 
@@ -66,9 +67,11 @@ time split: train on 2021-22 to 2024-25, test on 2025-26.
   low-usage defensive forward, rim-running big.
 
 **Engineering**
-- Python 3.11, uv, DuckDB, pandas, scikit-learn, Plotly, Streamlit (planned UI).
-- Typed, documented code; ruff, mypy and pytest (23 tests, including SQL transformations
-  run on hand-built fixture tables); GitHub Actions CI config; Makefile targets for each stage.
+- Python 3.11, uv, DuckDB, pandas, scikit-learn, OR-Tools (CP-SAT), Plotly, Streamlit.
+- Typed, documented code; ruff, mypy and pytest (33 tests, including SQL transformations
+  run on hand-built fixture tables, a brute-force check of the optimizer, a test that the app's
+  prediction matches the model's, and smoke tests of every app page); GitHub Actions CI config;
+  Makefile targets for each stage (`make data / features / models / app-data / app`).
 - All seasons, thresholds and seeds in one config file; model metadata records the config hash.
 
 **Lineup models and validation (milestone 5)**
@@ -84,14 +87,49 @@ time split: train on 2021-22 to 2024-25, test on 2025-26.
 - Diagnosed a selection bias (lineups that reach 100 possessions outperform their talent) and
   documented it as a limitation instead of re-tuning on the test season.
 
-## Planned (not done; do not present as done)
+**Player valuation and lineup optimizer (milestone 6)**
+- Converted player effects to wins and dollars with every input computed from the data:
+  2.28 wins per point of net rating (team regression), starters on court 52% of minutes,
+  replacement level from low-sample players, and an estimated price of about $23.8M per win.
+  Surplus value = value minus 2026-27 salary. Labelled as an approximation throughout.
+- Formulated "best five players under a budget" as a quadratic knapsack and solved it with
+  OR-Tools CP-SAT (linearized pair products), after pruning dominated players (347 → 114).
+  Repeated solves with no-good cuts exclude lineup types the model has never seen
+  (nearest-neighbour distance in archetype space). Top 10 lineups stored for each of three
+  budgets derived from team payrolls (Easy $172.8M / Standard $151.0M / Hard $127.4M).
+- Honest caveats recorded: solves hit a 20-second limit, so lineups are best found rather than
+  proven optimal; star-heavy top lineups are extrapolations in talent.
 
-- Milestone 6: player dollar value and surplus; optimal lineups under a budget via CP-SAT
-  (quadratic knapsack), restricted to in-distribution lineups.
-- Milestone 7–8: Streamlit game (pick five players under a cap), player explorer, methods page;
-  deployment to Streamlit Community Cloud.
+**Front end: Streamlit web app (milestone 7)**
+- Three pages, reading only small precomputed files (1.7 MB); no model fitting or network calls
+  at runtime. Data loads in about 1.5 seconds; each lineup prediction takes about 5 ms.
+- **The game:** choose a difficulty, search and pick five of 347 real players, watch payroll
+  fill toward the budget, and get a live predicted net rating with an 80% range, split into
+  talent and fit. Unusual lineups get a visible warning and a wider range. On submit: score,
+  percentile against 5,000 random valid lineups, gap to the best lineup, and a reveal of the
+  top 10.
+- **Player explorer:** sortable table of every pool player (talent, salary, value, surplus,
+  archetype mix) with an archetype filter.
+- **Methods page:** plain-language write-up of the data, archetypes, models, validation result
+  and limitations, with every number read from the pipeline's outputs.
 
-## Suggested bullets (safe to use now)
+**Data visualizations (Plotly, in the app)**
+- Payroll bar that fills toward a budget line and turns red with a text warning when over.
+- 5×5 heatmap of pairwise fit contributions using a colorblind-checked diverging palette
+  (blue helps, red hurts, grey neutral) with values printed in each cell.
+- Salary vs. talent scatter for the whole pool, coloured by surplus, with hover details.
+- In-table bar charts of each player's archetype mix.
+- Model comparison chart: test-season error for each model with 95% bootstrap intervals and
+  the estimated noise floor.
+- Archetype table with progress bars for group shares; plus BIC and model-comparison charts
+  saved as interactive HTML in `reports/`.
+
+## Not done yet (do not present as done)
+
+- Milestone 8: deploy the app to Streamlit Community Cloud and verify a fresh-clone rebuild.
+- Follow-up: fix the selection bias in the lineup test set (documented limitation).
+
+## Suggested bullets
 
 - Built a reproducible NBA data pipeline (Python, DuckDB, SQL) ingesting five seasons of
   NBA.com lineup, player and play-type data (85K+ lineup-seasons) with cached, rate-limited
@@ -106,10 +144,19 @@ time split: train on 2021-22 to 2024-25, test on 2025-26.
   95% CI −0.10 to +0.11), measured against an estimated noise floor that caps R² near 0.2.
 - Built calibrated 80% prediction intervals (79% empirical coverage) and diagnosed a selection
   bias in the evaluation set, documenting it rather than tuning on the test season.
+- Built an interactive Streamlit web app on top of the model: a salary-cap lineup game with
+  live predictions and uncertainty ranges, a player value explorer, and a methods page;
+  predictions run in about 5 ms from precomputed data.
+- Solved a budget-constrained lineup optimization (quadratic knapsack) with OR-Tools CP-SAT,
+  excluding lineup types outside the training data to avoid exploiting model extrapolation.
+- Designed Plotly visualizations for analysts and fans: a colorblind-safe pairwise fit heatmap,
+  a salary-vs-talent surplus scatter, and model-error charts with bootstrap intervals and a
+  noise-floor reference.
 
 ## Skills and keywords
 
 Python, SQL, DuckDB, pandas, scikit-learn, PCA, Gaussian mixture models, BIC model selection,
 ridge regression, bootstrap confidence intervals, time-blocked cross-validation,
-prediction-interval calibration, optimization with OR-Tools (planned), Streamlit (planned), pytest, mypy, ruff,
-GitHub Actions, data pipelines, entity resolution, NBA lineup analytics.
+prediction-interval calibration, quadratic knapsack optimization, OR-Tools CP-SAT, Streamlit,
+Plotly, data visualization, colorblind-safe design, pytest, mypy, ruff, GitHub Actions, data
+pipelines, entity resolution, NBA lineup analytics, player valuation.

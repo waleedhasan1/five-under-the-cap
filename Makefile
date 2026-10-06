@@ -14,7 +14,7 @@ models:
 	uv run python -m fivecap.evaluate
 
 app-data:
-	@echo "Milestone 6: not implemented yet" && exit 1
+	uv run python -m fivecap.export
 
 test:
 	uv run pytest -q

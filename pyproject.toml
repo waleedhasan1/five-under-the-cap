@@ -49,3 +49,7 @@ files = ["src", "tests"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+# App pages hold long prose f-strings; wrapping them hurts readability more than it helps.
+"app/**" = ["E501"]

@@ -1,0 +1,70 @@
+{
+  "training_seasons": [
+    "2021-22",
+    "2022-23",
+    "2023-24",
+    "2024-25"
+  ],
+  "test_season": "2025-26",
+  "test_min_possessions": 100,
+  "params_a": {
+    "decay": 0.5,
+    "alpha_player": 300.0,
+    "alpha_fit": null
+  },
+  "params_b": {
+    "decay": 0.5,
+    "alpha_player": 300.0,
+    "alpha_fit": 1.0
+  },
+  "headline": {
+    "rmse_a_minus_b": 0.01109117833003559,
+    "ci95_low": -0.0988943796142618,
+    "ci95_high": 0.11486366625897466,
+    "share_of_bootstrap_b_better": 0.584,
+    "noise_floor_wrmse": 11.750991583870762,
+    "max_achievable_wr2_approx": 0.20137670748188874,
+    "n_test_lineups": 262,
+    "test_possessions": 57738.0,
+    "unseen_player_slots": 92
+  },
+  "interval": {
+    "nominal": 0.8,
+    "empirical_unweighted": 0.7900763358778626,
+    "empirical_possession_weighted": 0.7643319824032699,
+    "median_half_width": 18.461397617204753,
+    "median_model_only_half_width": 3.7662743892815254,
+    "tau2_resid": 14.57649229981672
+  },
+  "noise_model": {
+    "tau2": 7.479556194712586,
+    "c": 30430.527119863298,
+    "r2": 0.9930149311242938
+  },
+  "metrics": [
+    {
+      "model": "0",
+      "wrmse": 13.919544479597752,
+      "wr2": -0.12058031333493746,
+      "wrmse_ci_low": 12.580025920726852,
+      "wrmse_ci_high": 15.199616651811581
+    },
+    {
+      "model": "A",
+      "wrmse": 13.311230631189613,
+      "wr2": -0.024776973586372986,
+      "wrmse_ci_low": 12.037662149469599,
+      "wrmse_ci_high": 14.534221427896885
+    },
+    {
+      "model": "B",
+      "wrmse": 13.300139452859577,
+      "wr2": -0.023069956512306034,
+      "wrmse_ci_low": 12.0200478599076,
+      "wrmse_ci_high": 14.545090170812749
+    }
+  ],
+  "seed": 20261005,
+  "config_hash": "bfab3080705f",
+  "date": "2026-10-06"
+}

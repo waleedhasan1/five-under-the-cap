@@ -34,17 +34,13 @@ thresholds:
 
 random_seed: 20261005
 
-# Filled at milestone 6 from the salary data (PROJECT_PLAN.md section 8, "Budgets").
-budgets:
-  easy: null
-  standard: null
-  hard: null
 
 # Must be looked up from an official source with the date; never from memory.
 salary_cap:
-  amount: null
-  source: null
-  retrieved: null
+  season: "2026-27"
+  amount: 164961000
+  source: "NBA Communications, 'NBA sets Salary Cap for 2026-27 season at $164.961 million' (published 2026-06-30), https://pr.nba.com/2026-27-salary-cap/"
+  retrieved: "2026-10-06"
 
 # Synergy play types pulled when the endpoint cooperates (optional features).
 play_types: [Isolation, Transition, PRBallHandler, PRRollman, Postup, Spotup, Handoff, Cut, OffScreen, OffRebound, Misc]
@@ -79,3 +75,29 @@ lineup_model:
   interval: 0.8
   bootstrap_fit_reps: 200
   bootstrap_test_reps: 2000
+
+game:
+  # Budgets are computed from the salary data at export time (PROJECT_PLAN.md section 8):
+  # Standard = median across teams of the sum of their five highest salaries; Easy = 75th
+  # percentile; Hard = 25th. Written to app_data/game.json.
+  budget_quantiles: {easy: 0.75, standard: 0.5, hard: 0.25}
+  # Observed lineups that define "in distribution" (archetype-composition space).
+  ood_min_possessions: 25
+  ood_quantile: 0.95
+  # Interval widening factor shown for out-of-distribution lineups (a stated choice, not fitted).
+  ood_interval_multiplier: 1.5
+  # Optimizer
+  dominance_count: 5          # dominated if this many same-archetype players are cheaper and better
+  top_n_lineups: 10
+  max_solver_rounds: 300
+  solver_seconds_per_round: 20
+  objective_scale: 1000       # CP-SAT needs integers: points per 100 x this
+  random_lineups: 5000        # sample of valid lineups for the score percentile
+  bootstrap_reps: 200
+
+valuation:
+  # Minimum salary = most common salary in the bottom decile of the salary table.
+  min_salary_quantile: 0.1
+  # A "starter's share" of team possessions = mean on-court share of each team's top five
+  # players by minutes in the latest season.
+  starters_per_team: 5

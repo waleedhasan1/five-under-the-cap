@@ -13,7 +13,9 @@ net rating better than summing individual player ratings?
 | 3. Warehouse | done: marts built by SQL, data tests pass |
 | 4. Archetypes | done (PCA + mixture, k=6); names approved |
 | 5. Lineup models + validation | done; result reported below |
-| 6–8 | not started |
+| 6. Valuation + optimizer | done |
+| 7. App | done: game, player explorer, methods page; runs locally from app_data/ |
+| 8. Ship | not started (deployment) |
 
 ## Results
 
@@ -81,6 +83,10 @@ that send more than 20 requests a minute. Both files are gitignored.
 - Mid-range shots are one zone (no short/long split) because the zone endpoint does not separate them.
 - Salaries are a single snapshot of the Basketball Reference contracts table; players missing from it
   (for example, unsigned at that date) are not in the game pool.
+- Star-heavy lineups are extrapolations: the out-of-distribution check covers the mix of player
+  types, not talent level, so the optimizer's top lineups (predicted around +33) are far outside
+  observed lineups. The optimizer's solves hit their 20-second limit, so its lineups are best
+  found, not proven optimal.
 - No opponent adjustment in v1: lineup aggregates average over whoever the lineup faced. Starters
   mostly face starters, which biases comparisons.
 
