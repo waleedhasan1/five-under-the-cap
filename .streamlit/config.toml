@@ -1,6 +1,14 @@
+# Windows XP look shared with the owner's other projects (see app/theme.py).
 [theme]
-primaryColor = "#2a78d6"
-font = "sans serif"
+base = "light"
+primaryColor = "#0054E3"
+backgroundColor = "#C0C0C0"
+secondaryBackgroundColor = "#DFDFDF"
+textColor = "#000000"
+font = "Tahoma, 'MS Sans Serif', sans-serif"
+
+[client]
+toolbarMode = "minimal"
 
 [browser]
 gatherUsageStats = false

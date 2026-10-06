@@ -23,6 +23,16 @@ def money(x: float) -> str:
     return f"${x / 1e6:,.1f}M"
 
 
+def md(text: str) -> str:
+    """Escape dollar signs so Streamlit markdown doesn't read "$...$" as LaTeX."""
+    return text.replace("$", "\\$")
+
+
+def money_md(x: float) -> str:
+    """``money`` for use inside markdown."""
+    return md(money(x))
+
+
 def signed(x: float) -> str:
     """+1.2 / −1.2 with a real minus sign."""
     return f"{x:+.1f}".replace("-", "−")

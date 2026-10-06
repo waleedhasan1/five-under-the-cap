@@ -5,15 +5,21 @@ from __future__ import annotations
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-from common import POS, data, money
+from common import data, md, money_md
+from theme import XP_BLUE, section, style_fig, window
 
-st.set_page_config(page_title="Methods · Five Under the Cap", page_icon="🏀", layout="wide")
+st.set_page_config(
+    page_title="Methods · Five Under the Cap",
+    page_icon="🏀",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+window("Methods", "Methods — Five Under the Cap")
 d = data()
 vm, am, gm = d.validation_meta, d.archetype_meta, d.meta
 h = vm["headline"]
 train = vm["training_seasons"]
 
-st.title("Methods")
 st.markdown(
     "**Question.** Does player *fit* matter beyond individual talent? Specifically: does adding "
     "role-pairing terms to a lineup model predict next-season lineup net rating better than "
@@ -27,22 +33,22 @@ st.info(
     icon="📏",
 )
 
-st.header("Data")
+section("Data")
 st.markdown(f"""
 - **Lineups, players, teams:** NBA.com stats via `nba_api`, regular seasons {train[0]} to
   {vm["test_season"]}. Five-man lineup totals (possessions, net rating), player box, advanced,
   scoring, shot-zone, bio and Synergy play-type stats.
 - **Salaries:** the Basketball Reference contracts table for {gm["salary_season"]}, saved once.
   Players are matched to NBA.com by normalized name and team, with a manual override file.
-- **Salary cap ({gm["salary_cap"]["season"]}):** {money(gm["salary_cap"]["amount"])}. Source:
-  {gm["salary_cap"]["source"]}; retrieved {gm["salary_cap"]["retrieved"]}. Shown for context;
+- **Salary cap ({gm["salary_cap"]["season"]}):** \\${gm["salary_cap"]["amount"]:,.0f}. Source:
+  {md(gm["salary_cap"]["source"])}; retrieved {gm["salary_cap"]["retrieved"]}. Shown for context;
   game budgets come from team payrolls (below).
 - **Game pool:** {gm["pool_size"]} players with at least 500 minutes in {gm["ratings_through"]}
   and a {gm["salary_season"]} salary. **Rookies without NBA minutes are excluded**, as are
   players missing from the contracts table when it was saved (for example, unsigned players).
 """)
 
-st.header("Archetypes")
+section("Archetypes")
 names = gm["archetype_names"]
 st.markdown(f"""
 Each player-season (500+ minutes, {train[0]} to {train[-1]}; {am["n_player_seasons"]:,} in all) is
@@ -68,7 +74,7 @@ for a, col in enumerate(names):
     rows.append(
         {
             "Archetype": names[col],
-            "Share of player-seasons": share,
+            "Share of player-seasons": 100 * share,
             "Most typical members": ", ".join(
                 f"{n} ({s[2:]})" for n, s in t[["player_name", "season"]].values
             ),
@@ -80,7 +86,7 @@ st.dataframe(
     use_container_width=True,
     column_config={
         "Share of player-seasons": st.column_config.ProgressColumn(
-            format="%.0f%%", min_value=0, max_value=1
+            format="%.0f%%", min_value=0, max_value=100
         )
     },
 )
@@ -89,7 +95,7 @@ st.caption(
     "(corner threes, off-screen and handoff actions); steal and block rates do not set it apart."
 )
 
-st.header("Lineup models")
+section("Lineup models")
 pb = vm["params_b"]
 st.markdown(f"""
 The target is a lineup's **net rating per 100 possessions** in a season. Every fit is weighted
@@ -105,7 +111,7 @@ Penalties and the recency weight were tuned by **time-blocked cross-validation i
 training seasons only**: each validation season was predicted from the seasons before it.
 """)
 
-st.header("Validation")
+section("Validation")
 st.markdown(f"""
 Trained on {train[0]}–{train[-1]}, tested **once** on {vm["test_season"]} lineups with at least
 {vm["test_min_possessions"]} possessions ({h["n_test_lineups"]} lineups,
@@ -119,7 +125,7 @@ fig = go.Figure(
     go.Bar(
         x=cmp_["label"],
         y=cmp_["wrmse"],
-        marker_color=POS,
+        marker_color=XP_BLUE,
         width=0.5,
         error_y=dict(
             type="data",
@@ -143,12 +149,12 @@ fig.add_hline(
 fig.update_layout(
     title=f"Test-season error, {vm['test_season']} (lower is better; bars show 95% CIs)",
     height=380,
-    margin=dict(l=0, r=0, t=40, b=0),
+    margin=dict(l=70, r=10, t=40, b=40),
     yaxis=dict(title="weighted RMSE, pts per 100", rangemode="tozero"),
 )
 c1, c2 = st.columns([3, 2])
 with c1:
-    st.plotly_chart(fig, use_container_width=True, theme="streamlit")
+    st.plotly_chart(style_fig(fig), use_container_width=True, theme=None)
 with c2:
     st.dataframe(
         cmp_[["label", "wrmse", "wrmse_ci_low", "wrmse_ci_high", "wr2"]].rename(
@@ -183,7 +189,7 @@ st.markdown(f"""
   possession-weighted).
 """)
 
-st.header("Value and surplus (approximation)")
+section("Value and surplus (approximation)")
 v = gm["valuation"]
 st.markdown(f"""
 A deliberately simple chain, with every input computed from this project's data:
@@ -195,20 +201,20 @@ A deliberately simple chain, with every input computed from this project's data:
 3. **Replacement level:** the average effect of low-sample players
    ({v["replacement_effect"]:+.2f}, vs. a possession-weighted average of {v["average_effect"]:+.2f}).
    A team of them would win about {v["replacement_team_wins"]:.0f} games.
-4. **Price of a win:** league payroll ({money(v["league_payroll"])}) above a minimum-salary league
-   ({v["n_teams"]} teams × {v["roster_size"]:.0f} players × {money(v["min_salary"])}), divided by
-   wins above a replacement-level league: **{money(v["price_per_win"])} per win**.
+4. **Price of a win:** league payroll ({money_md(v["league_payroll"])}) above a minimum-salary league
+   ({v["n_teams"]} teams × {v["roster_size"]:.0f} players × {money_md(v["min_salary"])}), divided by
+   wins above a replacement-level league: **{money_md(v["price_per_win"])} per win**.
 
 **Value** = wins added over a starter's share of minutes × price per win. **Surplus** = value −
 salary. Ridge shrinks player effects toward zero, so values are conservative, and one price per
 win ignores contract structure, cap rules and market timing.
 """)
 
-st.header("The game")
+section("The game")
 st.markdown(f"""
 - **Budgets:** Standard is the median, across teams, of the sum of each team's five highest
   {gm["salary_season"]} salaries; Easy is the 75th percentile and Hard the 25th
-  ({money(gm["budgets"]["easy"])} / {money(gm["budgets"]["standard"])} / {money(gm["budgets"]["hard"])}).
+  ({money_md(gm["budgets"]["easy"])} / {money_md(gm["budgets"]["standard"])} / {money_md(gm["budgets"]["hard"])}).
 - **Ratings** use Model B refit on all five seasons; archetype mixes come from {gm["ratings_through"]}.
 - **Unusual lineups:** a lineup's archetype composition (the sum of its five membership vectors)
   is compared with every observed lineup. If it is further from its nearest neighbour than 95% of
@@ -221,7 +227,7 @@ st.markdown(f"""
   percentile compares against random valid lineups at the same budget.
 """)
 
-st.header("Limitations")
+section("Limitations")
 st.markdown(f"""
 - **Selection bias in the test set (to be fixed).** Lineups that reach
   {vm["test_min_possessions"]} possessions are the ones coaches kept playing, which favours

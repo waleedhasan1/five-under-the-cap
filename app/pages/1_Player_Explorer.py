@@ -4,14 +4,20 @@ from __future__ import annotations
 
 import plotly.graph_objects as go
 import streamlit as st
-from common import DIVERGING, approx_note, data, money
+from common import DIVERGING, approx_note, data, money_md
+from theme import style_fig, window
 
-st.set_page_config(page_title="Player Explorer · Five Under the Cap", page_icon="🏀", layout="wide")
+st.set_page_config(
+    page_title="Player Explorer · Five Under the Cap",
+    page_icon="🏀",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+window("Player Explorer", "Player Explorer — Five Under the Cap")
 d = data()
 p = d.players.copy()
 arch = d.archetype_cols
 
-st.title("Player Explorer")
 st.markdown(
     f"All **{len(p)}** players in the game pool: at least "
     f"500 minutes in {d.meta['ratings_through']} and a {d.meta['salary_season']} salary. "
@@ -96,13 +102,13 @@ fig = go.Figure(
 fig.update_layout(
     title="Salary vs. talent (blue = more value than salary, red = less)",
     height=480,
-    margin=dict(l=0, r=0, t=40, b=0),
+    margin=dict(l=70, r=10, t=40, b=50),
     xaxis=dict(title=f"{d.meta['salary_season']} salary", tickformat="$.2s"),
     yaxis=dict(title="Talent (pts per 100 possessions)", zeroline=True),
 )
-st.plotly_chart(fig, use_container_width=True, theme="streamlit")
+st.plotly_chart(style_fig(fig), use_container_width=True, theme=None)
 st.caption(
-    f"Price of a win used for value: {money(d.meta['valuation']['price_per_win'])} "
+    f"Price of a win used for value: {money_md(d.meta['valuation']['price_per_win'])} "
     "(estimated from league payroll and wins; see Methods)."
 )
 approx_note()

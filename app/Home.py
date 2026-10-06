@@ -5,15 +5,21 @@ from __future__ import annotations
 import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
-from common import DIVERGING, OVER, POS, approx_note, data, money, signed
+from common import DIVERGING, OVER, approx_note, data, money, money_md, signed
+from theme import XP_BLUE, section, style_fig, window
 
 from fivecap.game import pair_grid
 
-st.set_page_config(page_title="Five Under the Cap", page_icon="🏀", layout="wide")
+st.set_page_config(
+    page_title="Five Under the Cap",
+    page_icon="🏀",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+window("Home", "Five Under the Cap — Build a lineup")
 d = data()
 players, game, meta = d.players, d.game, d.meta
 
-st.title("Five Under the Cap")
 st.markdown(
     f"Build a five-man lineup from **{len(players)}** real NBA players under a "
     f"{meta['salary_season']} salary budget. The model predicts its net rating per 100 "
@@ -59,7 +65,7 @@ bar.add_trace(
         x=[payroll],
         y=[""],
         orientation="h",
-        marker_color=OVER if over else POS,
+        marker_color=OVER if over else XP_BLUE,
         width=0.5,
         hovertemplate=f"Payroll {money(payroll)}<extra></extra>",
     )
@@ -78,14 +84,16 @@ bar.update_layout(
     xaxis=dict(range=[0, max(budget, payroll) * 1.08], tickformat="$.3s", showgrid=False),
     yaxis=dict(visible=False),
 )
-st.plotly_chart(bar, use_container_width=True, config={"displayModeBar": False}, theme="streamlit")
+st.plotly_chart(
+    style_fig(bar), use_container_width=True, config={"displayModeBar": False}, theme=None
+)
 remaining = budget - payroll
 st.markdown(
-    f"**Payroll {money(payroll)}** · "
+    f"**Payroll {money_md(payroll)}** · "
     + (
-        f":red[**Over budget by {money(-remaining)}** — this lineup can't be submitted]"
+        f":red[**Over budget by {money_md(-remaining)}** — this lineup can't be submitted]"
         if over
-        else f"{money(remaining)} left · {5 - len(picked)} slot(s) open"
+        else f"{money_md(remaining)} left · {5 - len(picked)} slot(s) open"
     )
 )
 
@@ -149,13 +157,14 @@ heat = go.Figure(
 )
 heat.update_layout(
     height=380,
-    margin=dict(l=0, r=0, t=36, b=0),
+    margin=dict(l=150, r=10, t=40, b=80),
+    xaxis=dict(showgrid=False),
     title="How each pair fits (blue helps, red hurts)",
-    yaxis=dict(autorange="reversed"),
+    yaxis=dict(autorange="reversed", showgrid=False),
 )
 gc1, gc2 = st.columns([3, 2])
 with gc1:
-    st.plotly_chart(heat, use_container_width=True, theme="streamlit")
+    st.plotly_chart(style_fig(heat), use_container_width=True, theme=None)
 with gc2:
     st.markdown("**Your five**")
     st.dataframe(
@@ -189,7 +198,7 @@ if st.session_state.get(state_key) == tuple(sorted(picked)):
     best = d.optimal[(d.optimal["difficulty"] == key) & (d.optimal["rank"] == 1)].iloc[0]
     pct = 100 * float((rand < pred["total"]).mean())
     gap = float(best["total"]) - pred["total"]
-    st.subheader("Result")
+    section("Result")
     r1, r2, r3 = st.columns(3)
     r1.metric("Your score", signed(pred["total"]))
     r2.metric(
