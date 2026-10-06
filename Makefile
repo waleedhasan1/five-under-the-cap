@@ -8,7 +8,7 @@ data:
 	uv run python -m fivecap.warehouse
 
 features:
-	@echo "Milestone 3/4: not implemented yet" && exit 1
+	uv run python -m fivecap.archetypes
 
 models:
 	@echo "Milestone 5: not implemented yet" && exit 1

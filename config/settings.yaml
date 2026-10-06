@@ -48,3 +48,19 @@ salary_cap:
 
 # Synergy play types pulled when the endpoint cooperates (optional features).
 play_types: [Isolation, Transition, PRBallHandler, PRRollman, Postup, Spotup, Handoff, Cut, OffScreen, OffRebound, Misc]
+
+archetypes:
+  # Fit on training seasons only (no test-season information in the archetype definitions).
+  features: [zone_rim, zone_paint, zone_mid, zone_corner3, fta_rate, assisted_share, usg_pct,
+             ast_pct, oreb_pct, dreb_pct, stl_per100, blk_per100, height_in, weight_lb]
+  # Synergy play-type shares; used when present, missing types treated as 0.
+  play_type_features: [pt_cut, pt_handoff, pt_isolation, pt_offrebound, pt_offscreen,
+                       pt_postup, pt_prballhandler, pt_prrollman, pt_spotup, pt_transition]
+  # Left out because they are exact or near-exact linear combinations of kept columns:
+  # zone_atb3 (zone shares sum to 1), pt_misc (play-type shares sum to 1),
+  # fg3a_rate (~ zone_corner3 + zone_atb3).
+  k_range: [5, 12]
+  covariance_types: [full, diag]
+  n_init: 5
+  reg_covar: 1.0e-3
+  stability_seeds: 10

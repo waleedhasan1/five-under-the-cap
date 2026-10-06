@@ -1,0 +1,47 @@
+{
+  "training_seasons": [
+    "2021-22",
+    "2022-23",
+    "2023-24",
+    "2024-25"
+  ],
+  "n_player_seasons": 1477,
+  "features": [
+    "zone_rim",
+    "zone_paint",
+    "zone_mid",
+    "zone_corner3",
+    "fta_rate",
+    "assisted_share",
+    "usg_pct",
+    "ast_pct",
+    "oreb_pct",
+    "dreb_pct",
+    "stl_per100",
+    "blk_per100",
+    "height_in",
+    "weight_lb",
+    "pt_cut",
+    "pt_handoff",
+    "pt_isolation",
+    "pt_offrebound",
+    "pt_offscreen",
+    "pt_postup",
+    "pt_prballhandler",
+    "pt_prrollman",
+    "pt_spotup",
+    "pt_transition"
+  ],
+  "k": 5,
+  "covariance_type": "full",
+  "bic": 54665.29779356768,
+  "stability_ari_mean": 0.5552239776193173,
+  "stability_ari_min": 0.48404249083131035,
+  "bic_best_k_by_seed": {
+    "5": 9,
+    "6": 1
+  },
+  "seed": 20261005,
+  "config_hash": "15de53fc2fc6",
+  "date": "2026-10-05"
+}
