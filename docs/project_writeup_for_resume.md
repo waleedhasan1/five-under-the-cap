@@ -1,14 +1,13 @@
 # Project write-up for the resume writer
 
-*Status as of 2026-10-06. Milestones 1–4 of 8 are complete. Update this file as milestones land.*
+*Status as of 2026-10-06. Milestones 1–5 of 8 are complete. Update this file as milestones land.*
 
 ## Instructions for the resume writer
 
 - Use only the facts in this file. Every number here was produced by the code in this repo.
-- **Do not claim a modeling result yet.** The main experiment (milestone 5: do "fit" terms
-  beat a sum-of-talent baseline out of sample?) has not been run. Write bullets that describe
-  what was built, not what it found. Once the result exists, the owner chooses how to frame it,
-  whichever way it comes out.
+- **The main result is a null result, and the owner has approved this framing:** "Measured
+  carefully, fit terms did not beat summed talent out of sample." Never turn it into a claim
+  that fit was found to matter, or that the model is accurate. The selling point is the rigor.
 - Do not invent metrics, users, accuracy figures or deployment status. The app is not built or
   deployed yet.
 - Target role: Basketball Data Scientist (Utah Jazz). Readers are professional basketball
@@ -68,15 +67,25 @@ time split: train on 2021-22 to 2024-25, test on 2025-26.
 
 **Engineering**
 - Python 3.11, uv, DuckDB, pandas, scikit-learn, Plotly, Streamlit (planned UI).
-- Typed, documented code; ruff, mypy and pytest (16 tests, including SQL transformations
+- Typed, documented code; ruff, mypy and pytest (23 tests, including SQL transformations
   run on hand-built fixture tables); GitHub Actions CI config; Makefile targets for each stage.
 - All seasons, thresholds and seeds in one config file; model metadata records the config hash.
 
+**Lineup models and validation (milestone 5)**
+- Model 0 (league mean), Model A (possession-weighted ridge on player effects, recency-weighted),
+  Model B (A plus 21 archetype-pair interaction features with a separate ridge penalty).
+- Leakage-free design: time split (train 2021-22 to 2024-25, test 2025-26); penalties tuned by
+  time-blocked CV inside training seasons; test-season archetype mixes taken from earlier seasons.
+- Result on 262 test lineups: weighted RMSE A 13.31 vs B 13.30; difference 0.01 points per 100
+  possessions, paired-bootstrap 95% CI −0.10 to +0.11. Both beat the league-mean baseline (13.92).
+- Estimated a noise floor (RMSE ≈ 11.8; achievable R² ≈ 0.2) by separating sampling noise from
+  true lineup spread, so results are judged against what is achievable.
+- 80% prediction intervals were calibrated: 79% empirical coverage on the test season.
+- Diagnosed a selection bias (lineups that reach 100 possessions outperform their talent) and
+  documented it as a limitation instead of re-tuning on the test season.
+
 ## Planned (not done; do not present as done)
 
-- Milestone 5: Model 0 (league mean), Model A (ridge on player effects), Model B (A plus
-  archetype-pair interaction terms); possession-weighted RMSE with a paired-bootstrap 95%
-  interval on the A vs. B difference; 80% prediction intervals with measured coverage.
 - Milestone 6: player dollar value and surplus; optimal lineups under a budget via CP-SAT
   (quadratic knapsack), restricted to in-distribution lineups.
 - Milestone 7–8: Streamlit game (pick five players under a cap), player explorer, methods page;
@@ -92,12 +101,15 @@ time split: train on 2021-22 to 2024-25, test on 2025-26.
 - Derived six data-driven player archetypes with PCA and a Gaussian mixture model (soft
   memberships), selecting model size by BIC and validating stability across random seeds;
   diagnosed and fixed an unstable first specification.
-- Designed a leakage-free time-split validation to test whether lineup "fit" adds predictive
-  value beyond individual talent (in progress).
+- Tested whether lineup "fit" predicts performance beyond individual talent with a leakage-free
+  time-split validation; fit terms did not beat summed talent out of sample (ΔRMSE 0.01,
+  95% CI −0.10 to +0.11), measured against an estimated noise floor that caps R² near 0.2.
+- Built calibrated 80% prediction intervals (79% empirical coverage) and diagnosed a selection
+  bias in the evaluation set, documenting it rather than tuning on the test season.
 
 ## Skills and keywords
 
 Python, SQL, DuckDB, pandas, scikit-learn, PCA, Gaussian mixture models, BIC model selection,
-ridge regression (planned), bootstrap confidence intervals (planned), time-series cross-validation
-(planned), optimization with OR-Tools (planned), Streamlit (planned), pytest, mypy, ruff,
+ridge regression, bootstrap confidence intervals, time-blocked cross-validation,
+prediction-interval calibration, optimization with OR-Tools (planned), Streamlit (planned), pytest, mypy, ruff,
 GitHub Actions, data pipelines, entity resolution, NBA lineup analytics.
